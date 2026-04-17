@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Agent | Your Dream Home Awaits</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --nav-bg: #f8f9fa;
+            --primary: #007bff; /* Vibrant Teal */
+            --accent: #ffc107; /* Bright Amber */
+            --card-bg: #ffffff;
+            --border: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: 0.3s ease;
+        }
+
+        /* --- Dark Theme Variables --- */
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --nav-bg: #1f1f1f;
+            --primary: #4dabf7; /* Lighter Blue */
+            --accent: #ffd43b; /* Softer Yellow */
+            --card-bg: #1e1e1e;
+            --border: #333333;
+            --shadow: 0 4px 6px rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif; /* Example font */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color var(--transition), color var(--transition);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* --- Navigation --- */
+        nav {
+            background-color: var(--nav-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { font-weight: 500; padding: 5px 10px; border-radius: 5px; }
+        .nav-links a:hover { background-color: rgba(var(--primary), 0.1); color: var(--primary); }
+
+        /* --- Main Content Structure --- */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Page Sections (For "Pages") --- */
+        section {
+            margin-bottom: 4rem;
+            display: none; /* Hide all sections by default */
+        }
+
+        /* The :target selector shows the section when linked */
+        section:target, section.default-page {
+            display: block;
+        }
+
+        /* --- Page: Home (Main) --- */
+        .hero {
+            background-color: var(--nav-bg);
+            padding: 4rem 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; color: var(--text-color); margin-bottom: 2rem; }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: var(--primary);
+            color: #fff;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background var(--transition);
+        }
+        .btn:hover { background-color: color-mix(in srgb, var(--primary), #000 20%); }
+
+        .featured-listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform var(--transition);
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 1rem; }
+        .price { color: var(--accent); font-weight: 700; font-size: 1.25rem; }
+        .details { font-size: 0.9rem; color: #777; margin-bottom: 1rem; }
+
+        /* --- Page: Gallery --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        /* Placeholder images - replace src later */
+        .gallery-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            height: 250px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 10px;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+        /* --- Page: Reviews --- */
+        .review-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reviewer { font-weight: 600; }
+        .stars { color: var(--accent); }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--nav-bg);
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        /* --- Basic Responsive adjustments --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-links { display: none; /* Simple mobile hide */ }
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="theme-toggle">
+        <label>Dark Mode</label>
+        <label class="switch">
+            <input type="checkbox" id="theme-switch">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <nav>
+        <a href="#home" class="logo">MODERN AGENT</a>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+        </ul>
+    </nav>
+
+    <main>
+
+        <section id="home" class="default-page">
+            <div class="hero">
+                <h1>Elevate Your Living.</h1>
+                <p>Find the modern, aesthetic home you've always dreamed of with the region's leading contemporary agent.</p>
+                <a href="#gallery" class="btn">Explore Properties</a>
+            </div>
+
+            <h2>Featured Listings</h2>
+            <div class="featured-listings">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600" alt="Modern House">
+                    <div class="card-body">
+                        <div class="price">$1,250,000</div>
+                        <h3>The Quartz Villa</h3>
+                        <p class="details">3 Bed | 2.5 Bath | 2,400 sqft</p>
+                        <p>A sleek, minimalist masterpiece with floor-to-ceiling windows.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=600" alt="Apartment">
+                    <div class="card-body">
+                        <div class="price">$780,000</div>
+                        <h3>Azure Heights</h3>
+                        <p class="details">2 Bed | 2 Bath | 1,100 sqft</p>
+                        <p>Modern loft-style apartment in the heart of the vibrant downtown district.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1599809275671-b5941c4693cf?q=80&w=600" alt="Modern Interior">
+                    <div class="card-body">
+                        <div class="price">$2,100,000</div>
+                        <h3>The Amber Estate</h3>
+                        <p class="details">5 Bed | 4 Bath | 4,200 sqft</p>
+                        <p>Expansive open-concept design with custom wood accents and pool.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery">
+            <h2>Property Gallery</h2>
+            <p style="margin-bottom: 20px;">Browse the aesthetic and modern designs we represent. (Placeholders below).</p>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Modern Lounge</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Minimalist Kitchen</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Master Suite</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Sun Deck & Pool</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Sleek Bathroom</div>
+                </div>
+                 <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?q=80&w=600" alt="Gallery Placeholder">
+                    <div class="gallery-overlay">Urban Loft</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reviews">
+            <h2>Customer Reviews</h2>
+            <p style="margin-bottom: 20px;">Hear what our clients are saying about their journey to the perfect home.</p>
+
+            <div class="review-section">
+                <div class="review">
+                    <div class="review-header">
+                        <span class="reviewer">Elena R.</span>
+                        <span class="stars">★★★★★</span>
+                    </div>
+                    <p>“Working with Modern Agent was seamless. They understood my need for a sleek, functional space immediately and found the Quartz Villa within a week. Highly recommended!”</p>
+                </div>
+
+                <div class="review">
+                    <div class="review-header">
+                        <span class="reviewer">Liam N.</span>
+                        <span class="stars">★★★★☆</span>
+                    </div>
+                    <p>“The aesthetic matching service is fantastic. They don’t just show you any home; they show you *your* home. Found my perfect downtown loft!”</p>
+                </div>
+                
+                 <div class="review">
+                    <div class="review-header">
+                        <span class="reviewer">Samantha & Chris P.</span>
+                        <span class="stars">★★★★★</span>
+                    </div>
+                    <p>“From the first consultation to the closing day, the experience was top-tier. They make the complex process feel easy. Found our dream aesthetic.”</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Modern Agent Real Estate. All rights reserved.</p>
+        <p>Aesthetic. Vibrant. Modern.</p>
+    </footer>
+
+    <script>
+        const themeSwitch = document.getElementById('theme-switch');
+        
+        // Check for saved theme preference in localStorage
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+            if (currentTheme === 'dark-mode') {
+                themeSwitch.checked = true;
+            }
+        }
+
+        // Add event listener to the switch
+        themeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode'); // Save preference
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light-mode'); // Save preference
+            }
+        });
+    </script>
+
+</body>
+</html>
